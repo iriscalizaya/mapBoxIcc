@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapbox</title>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        #navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #6a0dad;
+            color: white;
+            padding: 10px 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        #navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            flex: 0 0 auto;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .nav-buttons button {
+            background-color: #8a2be2;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s, background-color 0.3s;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+            touch-action: manipulation;
+            user-select: none;
+            min-height: 44px;
+        }
+        .nav-buttons button:hover {
+            background-color: #9370db;
+            transform: scale(1.05);
+        }
+        .nav-buttons button i {
+            font-size: 18px;
+        }
+        #btn-child-location {
+            background-color: #56c8f5;
+        }
+        #btn-child-location:hover {
+            background-color: #3db9ec;
+        }
+        #map-container {
+            position: relative;
+            width: 100vw;
+            height: calc(100vh - 50px);
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        .map-style-buttons {
+            position: absolute;
+            top: 20px; /* Adjusted to move away from the edge */
+            right: 30px; /* Increased spacing from the right edge */
+            display: none;
+            flex-direction: column;
+            gap: 15px; /* Increased spacing between buttons */
+        }
+        .map-style-buttons button {
+            width: 50px;
+            height: 50px;
+            background-color: #5a189a; /* Darker purple */
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background-color 0.3s;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+            touch-action: manipulation;
+            user-select: none;
+        }
+        .map-style-buttons button:hover {
+            background-color: #4a148c; /* More intense purple on hover */
+            transform: scale(1.1);
+        }
+        #toggle-style-container {
+            display: none;
+        }
+        #toggle-style {
+            display: none;
+        }
+
+        #info-card {
+            display: none;
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(30, 0, 60, 0.88);
+            backdrop-filter: blur(8px);
+            border: 1px solid #8a2be2;
+            border-radius: 16px;
+            padding: 18px 24px;
+            color: white;
+            z-index: 10;
+            min-width: 220px;
+            box-shadow: 0 4px 24px rgba(106, 13, 173, 0.5);
+            font-family: 'Segoe UI', sans-serif;
+        }
+        #info-card h3 {
+            margin: 0 0 12px 0;
+            font-size: 15px;
+            color: #d0a0ff;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .info-row i {
+            font-size: 18px;
+            color: #b36eff;
+            flex-shrink: 0;
+        }
+        .info-label {
+            color: #c0a0e0;
+            margin-right: 4px;
+        }
+        .info-value {
+            font-weight: 600;
+            color: #ffffff;
+        }
+        #info-card .updated {
+            margin-top: 10px;
+            font-size: 11px;
+            color: #9060c0;
+            text-align: right;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            #navbar {
+                padding: 8px 12px;
+            }
+            #navbar h1 {
+                font-size: 1.1rem;
+                width: 100%;
+                text-align: center;
+                margin-bottom: 6px;
+            }
+            .nav-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            .nav-buttons button {
+                font-size: 13px;
+                padding: 10px 14px;
+                min-height: 44px;
+                flex: 1 1 auto;
+            }
+            #map-container {
+                height: calc(100vh - 90px);
+            }
+            #info-card {
+                bottom: 12px;
+                left: 12px;
+                right: 12px;
+                min-width: unset;
+                padding: 14px 16px;
+            }
+            #info-card h3 {
+                font-size: 13px;
+            }
+            .info-row {
+                font-size: 13px;
+            }
+            .zoom-controls {
+                bottom: 16px;
+                right: 12px;
+            }
+            .zoom-controls button {
+                width: 44px;
+                height: 44px;
+                font-size: 20px;
+            }
+            .map-style-buttons {
+                top: 12px;
+                right: 12px;
+                gap: 10px;
+            }
+            .map-style-buttons button {
+                width: 46px;
+                height: 46px;
+                font-size: 22px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            #navbar h1 {
+                font-size: 0.95rem;
+            }
+            .nav-buttons button {
+                font-size: 12px;
+                padding: 10px 12px;
+                min-height: 44px;
+            }
+            #info-card {
+                bottom: 8px;
+                left: 8px;
+                right: 8px;
+                padding: 12px;
+            }
+        }
+
+        /* Zoom controls */
+        .zoom-controls {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 10;
+        }
+        .zoom-controls button {
+            width: 44px;
+            height: 44px;
+            background-color: #5a189a;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, background-color 0.3s;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+            touch-action: manipulation;
+            user-select: none;
+        }
+        .zoom-controls button:hover {
+            background-color: #4a148c;
+            transform: scale(1.1);
+        }
+    #user-panel {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    width: 260px;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: rgba(30, 0, 60, 0.95);
+    border: 1px solid #8a2be2;
+    border-radius: 16px;
+    padding: 16px;
+    color: white;
+    z-index: 20;
+    display: none;
+}
+
+#user-panel.active {
+    display: block;
+}
+
+#user-panel h3 {
+    margin-top: 0;
+    font-size: 14px;
+    color: #d0a0ff;
+    margin-bottom: 10px;
+}
+
+.user-item {
+    background: rgba(255,255,255,0.05);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.user-item:hover {
+    background: rgba(138, 43, 226, 0.4);
+}
+
+.user-item.active {
+    border: 2px solid #ffffff;
+    background: rgba(138, 43, 226, 0.6);
+}
+
+
+#user-panel {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    width: 260px;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: rgba(30, 0, 60, 0.95);
+    border: 1px solid #8a2be2;
+    border-radius: 16px;
+    padding: 16px;
+    color: white;
+    z-index: 20;
+    display: none;
+}
+
+#user-panel.active {
+    display: block;
+}
+
+.user-item {
+    background: rgba(255,255,255,0.05);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.user-item:hover {
+    background: rgba(138, 43, 226, 0.4);
+}
+
+.user-data {
+    font-size: 13px;
+    margin-top: 5px;
+    color: #ccc;
+}
+
+.user-item.activo {
+    border-left: 4px solid #00ff88;
+    background: rgba(0, 255, 136, 0.1);
+}
+
+.user-item.inactivo {
+    opacity: 0.5;
+    filter: grayscale(0.7);
+}
+
+.user-item button {
+    margin-top: 6px;
+    width: 100%;
+    padding: 6px;
+    border: none;
+    border-radius: 6px;
+    background: #00ff88;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.user-item button:hover {
+    background: #00cc6a;
+}
+
+.user-item button {
+    margin-top: 6px;
+    width: 100%;
+    padding: 6px;
+    border: none;
+    border-radius: 6px;
+    background: #00ff88;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.user-item button:hover {
+    background: #00cc6a;
+}
+
+.user-item div button {
+    margin-right: 5px;
+}
+@keyframes fadeIn {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+#eventos {
+    position: fixed;
+    top: 70px; /* 👈 debajo del navbar */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.evento {
+    min-width: 260px;
+    max-width: 90vw;
+    padding: 12px 18px;
+    border-radius: 12px;
+    color: white;
+    font-size: 14px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    animation: aparecer 0.3s ease;
+    backdrop-filter: blur(6px);
+}
+
+.evento small {
+    display: block;
+    font-size: 11px;
+    margin-top: 4px;
+    opacity: 0.8;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(-15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div id="navbar">
+        <h1>Mapbox</h1>
+        <div class="nav-buttons">
+            <button id="btn-my-location"><i class='bx bx-current-location'></i> Mi ubicación</button>
+            <button id="btn-child-location"><i class='bx bx-map-pin'></i> Usuario</button>
+            <button id="btn-toggle-style"><i class='bx bx-layer'></i> Relieves</button>
+        </div>
+    </div>
+    <div id="user-panel">
+        <h3>Usuarios</h3>
+        <div id="user-list"></div>
+    </div>
+    <div id="eventos"></div>
+    <div id="map-container">
+        <div id="map"></div>
+        <!-- Real-time data card -->
+        <div id="info-card">
+            <h3><i class='bx bx-map-pin'></i>&nbsp; Ubicación en tiempo real</h3>
+            <div class="info-row">
+                <i class='bx bx-up-arrow-circle'></i>
+                <span class="info-label">Latitud:</span>
+                <span class="info-value" id="info-lat">--</span>
+            </div>
+            <div class="info-row">
+                <i class='bx bx-right-arrow-circle'></i>
+                <span class="info-label">Longitud:</span>
+                <span class="info-value" id="info-lon">--</span>
+            </div>
+            <div class="info-row">
+                <i class='bx bx-time-five'></i>
+                <span class="info-label">Hora:</span>
+                <span class="info-value" id="info-hora">--</span>
+            </div>
+            <p class="updated">Actualizado en tiempo real</p>
+        </div>
+
+        <!-- Zoom controls -->
+        <div class="zoom-controls">
+            <button id="zoom-in" title="Acercar"><i class='bx bx-plus'></i></button>
+            <button id="zoom-out" title="Alejar"><i class='bx bx-minus'></i></button>
+        </div>
+
+        <div class="map-style-buttons" id="style-buttons">
+            <button id="street-view" title="Vista Satelital">
+                <i class='bx bx-world'></i>
+            </button>
+            <button id="dark-mode" title="Modo Oscuro">
+                <i class='bx bx-moon'></i>
+            </button>
+            <button id="light-mode" title="Modo Blanco">
+                <i class='bx bx-sun'></i>
+            </button>
+            <button id="normal-view" title="Vista Normal">
+                <i class='bx bx-map'></i>
+            </button>
+        </div>
+        
+    </div>
+    <script type="module" src="./app.js" ></script>
+</body>
+</html>

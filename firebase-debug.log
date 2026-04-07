@@ -1,0 +1,39 @@
+[debug] [2026-04-07T02:45:36.954Z] ----------------------------------------------------------------------
+[debug] [2026-04-07T02:45:36.957Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\WINDOWS\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2026-04-07T02:45:36.958Z] CLI Version:   15.13.0
+[debug] [2026-04-07T02:45:36.958Z] Platform:      win32
+[debug] [2026-04-07T02:45:36.958Z] Node Version:  v24.14.0
+[debug] [2026-04-07T02:45:36.958Z] Time:          Mon Apr 06 2026 22:45:36 GMT-0400 (hora de Bolivia)
+[debug] [2026-04-07T02:45:36.958Z] ----------------------------------------------------------------------
+[debug] 
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\WINDOWS\Desktop\PrograMovil1\web-map
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] 
+[debug] [2026-04-07T02:45:44.819Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-07T02:45:44.819Z] > authorizing via signed-in user (calizayairis2@gmail.com)
+[debug] [2026-04-07T02:45:44.821Z] Checked if tokens are valid: true, expires at: 1775532605954
+[debug] [2026-04-07T02:45:44.821Z] Checked if tokens are valid: true, expires at: 1775532605954
+[debug] [2026-04-07T02:45:44.823Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/mapboxc [none]
+[debug] [2026-04-07T02:45:45.531Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/mapboxc 403
+[debug] [2026-04-07T02:45:45.531Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/mapboxc {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-04-07T02:45:45.533Z] Request to https://firebase.googleapis.com/v1beta1/projects/mapboxc had HTTP Error: 403, The caller does not have permission
+[debug] [2026-04-07T02:45:45.534Z] FirebaseError: Request to https://firebase.googleapis.com/v1beta1/projects/mapboxc had HTTP Error: 403, The caller does not have permission
+    at responseToError (C:\Users\WINDOWS\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\WINDOWS\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:333:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+[error] 
+[error] Error: Failed to get Firebase project mapboxc. Please make sure the project exists and your account has permission to access it.
