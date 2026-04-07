@@ -2,6 +2,8 @@
 // Firebase Imports (CDN modules)
 // ==============================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";//sk.eyJ1IjoiaXJpc2NhbGl6YXlhIiwiYSI6ImNtbmh6bTlwaTA4YjQycG9mbXJ3Y29hamUifQ.WNrg-qMhTXVCsA2j_43gzA
+
 // ==============================
 // Firebase Configuration
 // ==============================
