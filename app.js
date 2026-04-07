@@ -26,7 +26,7 @@ const database = getDatabase(firebaseApp);
 
 
 // Mapbox configuration
-
+mapboxgl.accessToken = 'pk.eyJ1IjoiaXJpc2NhbGl6YXlhIiwiYSI6ImNtbXU2amk2cTI0ZWEyd3BzdmVnM3c5ZG4ifQ.Iiteu7AZ_EAcDZ5ZlWD_Jw';
 const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v11',
